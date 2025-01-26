@@ -1,14 +1,14 @@
 {
-  "name": "login",
+  "name": "loginprofile",
   "version": "1.0.0",
-  "description": "",
+  "description": "Login profile application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"nodemon src/app.js -e js,hbs"
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "aswinsagar",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.1",

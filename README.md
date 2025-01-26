@@ -46,9 +46,3 @@ This project is licensed under the MIT License.
 
 Current date: Sunday, January 26, 2025, 6 PM IST
 ```
-
-### Instructions for Use:
-1. Replace `yourusername` in the clone command with your actual GitHub username.
-2. You can add any additional sections or modify existing ones based on your project's requirements.
-3. Save this content into a file named `README.md` in your project directory.
-
