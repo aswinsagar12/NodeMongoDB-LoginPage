@@ -35,7 +35,7 @@ jobs:
 
     - name: Deploy to GKE
       run: |
-        kubectl apply -f Deployment.yaml
+        kubectl apply -f Deployment.yml
       # env:
       #   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
