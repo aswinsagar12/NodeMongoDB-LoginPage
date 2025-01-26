@@ -5,12 +5,16 @@ on:
     branches: [ main ]
 
 jobs:
-
   deploy:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GKE_SA_KEY }}' # Use secret containing your service account JSON
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
@@ -22,11 +26,18 @@ jobs:
         terraform init
         terraform apply -auto-approve
 
-    - name: Deploy to GKE
-      uses: google-github-actions/deploy-kubernetes-resources@main
+    - name: Get GKE Credentials
+      uses: google-github-actions/get-gke-credentials@v2
       with:
-        manifests: |
-          Deployment.yml
-        images: |
-          aswinsagar/loginprofile:v1:${{ github.sha }}
-        environment: ${{ secrets.ENVIRONMENT }}
+        cluster_name: loginprofile-cluster   # Replace with your actual cluster name
+        location: us-central1-a              # Replace with your cluster location
+        project_id: loginprofile123           # Your project ID
+
+    - name: Deploy to GKE
+      uses: google-github-actions/deploy-gke@v0.1
+      with:
+        image: aswinsagar/loginprofile:v1:${{ github.sha }}
+        cluster_name: loginprofile-cluster   # Replace with your actual cluster name
+        location: us-central1-a              # Replace with your cluster location
+        project_id: loginprofile123           # Your project ID
+        namespace: default                    # Change if necessary

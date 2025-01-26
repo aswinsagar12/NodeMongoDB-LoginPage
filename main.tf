@@ -3,7 +3,7 @@ provider "google" {
   project     = "loginprofile123"
   region      = "us-central1"
   zone        = "us-central1-a"
-  credentials = file("loginprofile.json")
+  #credentials = file("loginprofile.json")
 }
 
 # Create a GKE cluster
@@ -55,4 +55,4 @@ resource "google_container_cluster" "loginprofile_cluster" {
   remove_default_node_pool = true
 }
 
-# Note: If you want to create a separate node pool, define it below.
+
