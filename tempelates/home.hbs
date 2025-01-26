@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .home-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+    }
+
+    .home-container h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .home-container h2 {
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #666;
+    }
+
+    .home-container p {
+      font-size: 18px;
+      line-height: 1.5;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    .home-container a {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .home-container a:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="home-container">
+    <h1>Welcome Back!</h1>
+    <h2>Hello, {{naming}}!</h2>
+    <p>This is your home page, where you can access your personal information and interact with our platform.</p>
+    <a href="#">Explore More</a>
+  </div>
+</body>
+</html>
