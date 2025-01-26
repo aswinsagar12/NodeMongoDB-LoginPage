@@ -1,0 +1,32 @@
+name: Deploy to GKE
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.8
+
+    - name: Apply Terraform
+      run: |
+        terraform init
+        terraform apply -auto-approve
+
+    - name: Deploy to GKE
+      uses: google-github-actions/deploy-kubernetes-resources@main
+      with:
+        manifests: |
+          Deployment.yml
+        images: |
+          aswinsagar/loginprofile:v1:${{ github.sha }}
+        environment: ${{ secrets.ENVIRONMENT }}
