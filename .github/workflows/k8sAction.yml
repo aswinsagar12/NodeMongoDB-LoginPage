@@ -34,10 +34,16 @@ jobs:
         project_id: loginprofile123           # Your project ID
 
     - name: Deploy to GKE
-      uses: google-github-actions/deploy-gke@v0.1
-      with:
-        image: aswinsagar/loginprofile:v1:${{ github.sha }}
-        cluster_name: loginprofile-cluster   # Replace with your actual cluster name
-        location: us-central1-a              # Replace with your cluster location
-        project_id: loginprofile123           # Your project ID
-        namespace: default                    # Change if necessary
+      run: |
+        kubectl apply -f Deployment.yaml
+      # env:
+      #   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+
+    # - name: Deploy to GKE
+    #   uses: google-github-actions/deploy-gke@v0.1
+    #   with:
+    #     image: aswinsagar/loginprofile:v1:${{ github.sha }}
+    #     cluster_name: loginprofile-cluster   # Replace with your actual cluster name
+    #     location: us-central1-a              # Replace with your cluster location
+    #     project_id: loginprofile123           # Your project ID
+    #     namespace: default                    # Change if necessary
