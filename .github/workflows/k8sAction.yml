@@ -16,15 +16,15 @@ jobs:
       with:
         credentials_json: '${{ secrets.GKE_SA_KEY }}' # Use secret containing your service account JSON
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: 0.14.8
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #     terraform_version: 0.14.8
 
-    - name: Apply Terraform
-      run: |
-        terraform init
-        terraform apply -auto-approve
+    # - name: Apply Terraform
+    #   run: |
+    #     terraform init
+    #     terraform apply -auto-approve
 
     - name: Get GKE Credentials
       uses: google-github-actions/get-gke-credentials@v2
