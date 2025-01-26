@@ -1,48 +1,102 @@
-```markdown
-# Login Page Application
+# Node.js MongoDB Application
 
-This repository contains a fully containerized login page application built with Node.js and Express. The application is designed to provide a secure and user-friendly interface for user authentication. Utilizing Docker, this project simplifies deployment and ensures consistency across different environments.
-
-## Features
-
-- **Containerization**: The entire application is packaged in a Docker container, making it easy to deploy and manage.
-- **Environment Configuration**: Sensitive information such as database connection strings is stored in a `.env` file, ensuring security and flexibility.
-- **MongoDB Integration**: The application connects to MongoDB for data storage, enabling robust user management.
-- **Efficient Development**: With Docker, you can run the application locally without worrying about environment discrepancies.
-
-## Getting Started
-
-To get started with the project, follow these steps:
-
-1. **Clone the repository**:
-   ```
-   git clone https://github.com/yourusername/login-page.git
-   ```
-
-2. **Navigate to the project directory**:
-   ```
-   cd login-page
-   ```
-
-3. **Build the Docker image**:
-   ```
-   docker build -t login-app .
-   ```
-
-4. **Run the Docker container**:
-   ```
-   docker run -p 3000:3000 --env-file .env login-app
-   ```
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License.
+## Overview
+This repository contains a **Node.js MongoDB** application that serves as a simple login page for an eCommerce webpage. Users can:
+- **Sign up** and **log in** securely.
+- Use a **MongoDB database** (Atlas or local cluster) for user data storage.
 
 ---
 
-Current date: Sunday, January 26, 2025, 6 PM IST
-```
+## Features
+- **Node.js Backend**: Handles authentication and routing.
+- **MongoDB Integration**: Stores and retrieves user information.
+- **Dockerized Deployment**: Containerize and run the app efficiently.
+- **Infrastructure as Code (IaC)**: Provision GKE clusters using Terraform.
+- **CI/CD Pipeline**: Automate the entire process with GitHub Actions.
+
+---
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the application locally:
+   ```bash
+   npm run src/index.js
+   ```
+
+---
+
+## Docker Deployment
+1. Build the Docker image:
+   ```bash
+   docker build -t <image-name> .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 3000:3000 <image-name>
+   ```
+
+Access the application at: `http://localhost:3000`
+
+---
+
+## Terraform Deployment to GKE
+1. Navigate to the Terraform configuration folder:
+   ```bash
+   cd terraform
+   ```
+
+2. Initialize Terraform:
+   ```bash
+   terraform init
+   ```
+
+3. Apply the configuration to provision the GKE cluster:
+   ```bash
+   terraform apply
+   ```
+
+---
+
+## GitHub Actions CI/CD Pipeline
+This repository includes a GitHub Actions workflow for complete automation:
+
+1. **CI/CD Steps:**
+   - Build and push the Docker image to a container registry.
+   - Provision the GKE cluster using Terraform.
+   - Deploy the containerized application on GKE.
+
+2. **Secrets Management:**
+   - Store your GKE Service Account key in the **GitHub Secrets** section as `GCP_SA_KEY`.
+   - Use local `.env` files or secrets securely during Terraform deployments.
+
+---
+
+## Notes
+- **MongoDB Configuration**: Use MongoDB Atlas for production or a local MongoDB cluster for development.
+- Ensure your Terraform backend is properly configured for state management.
+- For secure deployments, manage all sensitive information via `.env` files or GitHub Secrets.
+
+---
+
+## Contribution
+Feel free to fork this repository and open pull requests to enhance functionality or fix issues.
+
+---
+
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+### Happy Coding! 🚀
