@@ -1,7 +1,7 @@
 /node_modules
+.env
 .terraform.lock.hcl
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
-
 loginprofile.json

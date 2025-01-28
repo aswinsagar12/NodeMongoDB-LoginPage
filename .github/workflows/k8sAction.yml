@@ -1,13 +1,49 @@
-name: Deploy to GKE
+name: CI/CD Workflow for NodeJS MongoDB App
 
-on:
+on: # Define the events to trigger the workflow
   push:
-    branches: [ main ]
+    branches:
+      - main  # Trigger the workflow on pushes to the 'main' branch
+  pull_request: # Optional: Trigger on PRs
+    branches:
+      - main # Trigger the workflow on PRs to the 'main' branch
+
+env:  # Environment variables accessible across all jobs
+  MONGO_URI: ${{ secrets.MONGO_URI }}  # Securely store sensitive information in GitHub Secrets
 
 jobs:
+  # Job 1: Checkout the code
+  git-checkout:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+  # Job 2: Docker Login, Build, and Push
+  docker-build-push:
+    runs-on: ubuntu-latest
+    needs: git-checkout  # Run only after the 'git-checkout' job
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/loginprofile:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/loginprofile:latest
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}  # Inject MONGO_URI during build
+
+
+  # Job 3: Install dependencies, run tests, and build the app
   deploy:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
 
