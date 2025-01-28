@@ -5,6 +5,7 @@
 terraform.tfstate
 terraform.tfstate.backup
 loginprofile.json
+loginprofileSateBucket.json
 
 #Sonar
 .sonar

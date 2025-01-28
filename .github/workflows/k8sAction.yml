@@ -73,22 +73,52 @@ jobs:
         run: npm test
         continue-on-error: true # This will allow the workflow to continue even if tests fail
 
-  # Job 5: Deploy to GKE
+  # Job 5: Provision GKE cluster with Terraform
+  terraform-provision:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.9.6 # Specify your Terraform version
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Validate Terraform Configuration
+        run: terraform validate
+
+      - name: Plan Infrastructure Changes
+        run: terraform plan -out=tfplan
+
+      - name: Apply Infrastructure Changes
+        run: terraform apply -auto-approve tfplan
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GKE_SA_KEY }}
+
+  # Job 6: Deploy to GKE
   deploy:
     runs-on: ubuntu-latest
-    needs: docker-build-push # Run only after the 'git-checkout' job
+    needs: terraform-provision # Run only after the Terraform job
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: "${{ secrets.GKE_SA_KEY }}" # Use secret containing your service account JSON key
+          credentials_json: ${{ secrets.GKE_SA_KEY }}
+
       - name: Get GKE Credentials
         uses: google-github-actions/get-gke-credentials@v2
         with:
           cluster_name: loginprofile-cluster # GKE cluster name
           location: us-central1-a # GKE cluster location
-          project_id: loginprofile123 #  project ID
+          project_id: loginprofile123 # Project ID
+
       - name: Deploy to GKE
         run: |
           kubectl apply -f Deployment.yml
