@@ -15,7 +15,7 @@ provider "google" {
   project     = "loginprofile123"
   region      = "us-central1"
   zone        = "us-central1-a"
-  credentials = file("loginprofile.json")
+  # credentials = file("loginprofile.json")
 }
 
 # Create a GKE cluster
