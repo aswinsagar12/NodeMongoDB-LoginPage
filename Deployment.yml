@@ -17,9 +17,9 @@ spec:
         image: aswinsagar/loginprofile:latest
         ports:
         - containerPort: 3000
-        # env:
-        # - name: MONGO_URI
-        #   value: mongodb://mongo:27017/loginprofile
+        env:
+        - name: MONGO_URI
+          value: mongodb+srv://aswinsagar12:admin@userdb.5rm0i.mongodb.net/userdb?retryWrites=true&w=majority&appName=userdb
 ---
 apiVersion: v1
 kind: Service
