@@ -74,35 +74,48 @@ jobs:
         continue-on-error: true # This will allow the workflow to continue even if tests fail
 
   # Job 5: Provision GKE cluster with Terraform
-  terraform-provision:
+  terraform-infraprovision:
     runs-on: ubuntu-latest
+    needs: git-checkout
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
 
+      # Step 2: Setup Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      # Step 3: Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GKE_SA_KEY }}  # Make sure this matches your secret name
+
+      # Step 4: Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.9.6 # Specify your Terraform version
+          terraform_version: 1.9.6
 
+      # Step 5: Initialize Terraform
       - name: Initialize Terraform
-        run: terraform init
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS="${{ github.workspace }}/gcp-credentials.json"
+          echo '${{ secrets.GKE_SA_KEY }}' > ${GOOGLE_APPLICATION_CREDENTIALS}
+          terraform init
 
-      - name: Validate Terraform Configuration
-        run: terraform validate
-
-      - name: Plan Infrastructure Changes
+      # Step 6: Plan Terraform Changes
+      - name: Plan Terraform Changes
         run: terraform plan -out=tfplan
 
-      - name: Apply Infrastructure Changes
+      # Step 7: Apply Terraform Changes
+      - name: Apply Terraform Changes
         run: terraform apply -auto-approve tfplan
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GKE_SA_KEY }}
 
   # Job 6: Deploy to GKE
   deploy:
     runs-on: ubuntu-latest
-    needs: terraform-provision # Run only after the Terraform job
+    needs: terraform-infraprovision # Run only after the Terraform job
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
