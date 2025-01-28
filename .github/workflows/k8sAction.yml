@@ -3,18 +3,18 @@ name: CI/CD Workflow for NodeJS MongoDB App
 on: # Define the events to trigger the workflow
   push:
     branches:
-      - main  # Trigger the workflow on pushes to the 'main' branch
+      - main # Trigger the workflow on pushes to the 'main' branch
   pull_request: # Optional: Trigger on PRs
     branches:
       - main # Trigger the workflow on PRs to the 'main' branch
 
-env:  # Environment variables accessible across all jobs
-  MONGO_URI: ${{ secrets.MONGO_URI }}  # Securely store sensitive information in GitHub Secrets
+env: # Environment variables accessible across all jobs
+  MONGO_URI: ${{ secrets.MONGO_URI }} # Securely store sensitive information in GitHub Secrets
 
 jobs:
   # Job 1: Checkout the code
   git-checkout:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
   # Job 2: Docker Login, Build, and Push
   docker-build-push:
     runs-on: ubuntu-latest
-    needs: git-checkout  # Run only after the 'git-checkout' job
+    needs: git-checkout # Run only after the 'git-checkout' job
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
@@ -38,48 +38,57 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/loginprofile:v2 .
           docker push ${{ secrets.DOCKER_USERNAME }}/loginprofile:v2
         env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}  # Inject MONGO_URI during build
+          MONGO_URI: ${{ secrets.MONGO_URI }} # Inject MONGO_URI during build
 
-
-  # Job 3: Install dependencies, run tests, and build the app
-  deploy:
+  # Job 3: Running test cases
+  run-tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout repository code
+        uses: actions/checkout@v3
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: '${{ secrets.GKE_SA_KEY }}' # Use secret containing your service account JSON
+      - name: Install dependencies
+        run: npm install
 
-    # - name: Setup Terraform
-    #   uses: hashicorp/setup-terraform@v1
-    #   with:
-    #     terraform_version: 0.14.8
+      - name: Run tests
+        run: npm test
+        continue-on-error: true # This will allow the workflow to continue even if tests fail
 
-    # - name: Apply Terraform
-    #   run: |
-    #     terraform init
-    #     terraform apply -auto-approve
+  # Job 4: Running test cases across different Node versions (Matrix Build)
+  run-tests-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+        continue-on-error: true # This will allow the workflow to continue even if tests fail
 
-    - name: Get GKE Credentials
-      uses: google-github-actions/get-gke-credentials@v2
-      with:
-        cluster_name: loginprofile-cluster   # Replace with your actual cluster name
-        location: us-central1-a              # Replace with your cluster location
-        project_id: loginprofile123           # Your project ID
-
-    - name: Deploy to GKE
-      run: |
-        kubectl apply -f Deployment.yml
-      # env:
-      #   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-
-    # - name: Deploy to GKE
-    #   uses: google-github-actions/deploy-gke@v0.1
-    #   with:
-    #     image: aswinsagar/loginprofile:v1:${{ github.sha }}
-    #     cluster_name: loginprofile-cluster   # Replace with your actual cluster name
-    #     location: us-central1-a              # Replace with your cluster location
-    #     project_id: loginprofile123           # Your project ID
-    #     namespace: default                    # Change if necessary
+  # Job 5: Deploy to GKE
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build-push # Run only after the 'git-checkout' job
+    steps:
+      - uses: actions/checkout@v2
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GKE_SA_KEY }}" # Use secret containing your service account JSON key
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: loginprofile-cluster # GKE cluster name
+          location: us-central1-a # GKE cluster location
+          project_id: loginprofile123 #  project ID
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f Deployment.yml

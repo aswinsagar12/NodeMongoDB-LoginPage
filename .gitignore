@@ -5,3 +5,7 @@
 terraform.tfstate
 terraform.tfstate.backup
 loginprofile.json
+
+#Sonar
+.sonar
+.scannerwork
