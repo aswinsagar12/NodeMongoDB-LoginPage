@@ -35,8 +35,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/loginprofile:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/loginprofile:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/loginprofile:v2 .
+          docker push ${{ secrets.DOCKER_USERNAME }}/loginprofile:v2
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}  # Inject MONGO_URI during build
 
