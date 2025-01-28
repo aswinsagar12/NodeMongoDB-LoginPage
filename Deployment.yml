@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: loginprofile-app
-        image: aswinsagar/loginprofile:v1
+        image: aswinsagar/loginprofile:latest
         ports:
         - containerPort: 3000
         # env:
